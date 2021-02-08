@@ -19,13 +19,23 @@ const PORT = 6565
     app.engine('handlebars', handlebars({defaultLayout : 'main'}))
     app.set('view engine', 'handlebars')
     //mongoose
+    mongoose.Promise = global.Promise
+    mongoose.connect('mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&ssl=false',  { useUnifiedTopology: true, useNewUrlParser: true}).then(
+        () => {
+            console.log('conected to mongodb')
+        }
+    ).catch(
+       (err) => {
+           console.log(err)
+       } 
+    )
 
 //routes
 app.get('/', (req,res) => {
     res.render('home')
 })
-const test = require('./routes/test')
-app.use('/test', test)
+const adminRoute = require('./routes/admin')
+app.use('/admin', adminRoute)
 
 //start
 app.listen(PORT, ( ) => {
