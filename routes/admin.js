@@ -13,15 +13,32 @@ router.get('/categorias/add', (req, res) => {
 })
 
 router.post('/categorias/nova', (req, res) => {
-    new Categoria(req.body).save().then(
-        () => {
-            res.send(req.body + 'saved')
-        }
-    ).catch(
-        (err) => {
-            res.send(err)
-        }
-    )
+
+    let erros = []
+
+    //validações
+    if(!req.body.nome || req.body.nome === undefined || req.body.nome === null){
+        erros.push({text : 'nome é obrigatório'})
+    }
+
+    if(!req.body.slug || req.body.slug === undefined || req.body.slug === null){
+        erros.push({text : 'slug é obrigatório'})
+    }
+
+    if(erros.length > 0){
+        res.render('admin/addcategorias', {erros : erros})
+    }else{
+        new Categoria(req.body).save().then(       
+            () => {     
+                req.flash('success_msg', 'Categoria criada com sucesso!')
+                res.redirect('/admin/categorias')
+            }            
+        ).catch(
+            (err) => {             
+                req.flash('error_msg', 'Erro ao salvar categoria!')
+                res.redirect('/admin/categorias')
+            })
+    }
 })
 
 module.exports = router

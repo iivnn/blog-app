@@ -3,6 +3,8 @@ const express = require('express')
 const mongoose = require('mongoose')
 const handlebars = require('express-handlebars')
 const bodyparser = require('body-parser')
+const session = require('express-session')
+const flash = require('connect-flash')
 
 //variables
 const PORT = 6565
@@ -29,7 +31,23 @@ const PORT = 6565
            console.log(err)
        } 
     )
+    //session
+    app.use(session({
+        secret : "ZCTiVHn8Ur",
+        resave : true,
+        saveUninitialized : true
+    }))
+    //flash
+    app.use(flash())
 
+//middleware
+app.use(
+    (req, res, next) => {
+        res.locals.success_msg = req.flash('success_msg')
+        res.locals.error_msg = req.flash('error_msg')
+        next();
+    }
+)
 //routes
 app.get('/', (req,res) => {
     res.render('home')
