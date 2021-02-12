@@ -7,7 +7,11 @@
                 <input type="text" id="nome" name="nome" placeholder="Nome da Categoria" class="form-control" value="{{categoria.nome}}"> 
             <label for="slug" class=" mt-4">Slug: </label>
                 <input type="text" id="slug" name="slug" placeholder="Slug da categoria" class="form-control" value="{{categoria.slug}}">
-            <button type="submit" class="btn btn-success mt-4">Editar Categoria</button>
+            <button type="submit" class="btn btn-success mt-4 float-start">Editar Categoria</button>       
+        </form>
+        <form action="/admin/categorias/excluir" method="POST" >
+            <input type="hidden" name="_id" value="{{categoria._id}}">
+            <button type="submit" class="btn btn-danger ms-2 mt-4">Exluir Categoria</button>           
         </form>
     </div>
 </div>

@@ -70,9 +70,26 @@ router.post('/categorias/edit', (req, res) => {
     ).catch(
         (err) => {   
             req.flash('error_msg' , 'Não foi possivel atualizar!')
-            res.send('/admin/categorias')   
+            res.redirect('/admin/categorias')   
         }
     )
 })
 
+router.post('/categorias/excluir', (req, res) => {
+    Categoria.deleteOne({ _id :  req.body._id }).then(
+        (result) => {
+            if(result.deletedCount == 1){
+                req.flash('success_msg' , 'Excluido com sucesso!')
+            }else{
+                req.flash('error_msg' , 'Erro ao excluir!')
+            }
+            res.redirect('/admin/categorias')   
+        }
+    ).catch(
+        (err) => {
+            req.flash('error_msg', 'Erro no servidor!')
+            res.redirect('/admin/categorias')  
+        }
+    )
+})
 module.exports = router
