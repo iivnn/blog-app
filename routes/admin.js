@@ -1,95 +1,158 @@
-const express = require('express')
-const router = express.Router()
-const mongoose = require('mongoose')
-require('../models/Categoria')
-const Categoria = mongoose.model('categoria')
+/*jshint esversion: 6 */
+const express = require('express');
+const mongoose = require('mongoose');
+require('../models/Categoria');
+require('../models/Postagem');
+
+const router = express.Router();
+
+const Categoria = mongoose.model('categoria');
+const Postagem = mongoose.model('postagem');
 
 router.get('/categorias', (req,res) => {
     Categoria.find().then(
         (result) => {           
-             res.render('admin/categorias', {categorias : result.map(result => result.toJSON()).reverse()})
+             res.render('admin/categorias', {categorias : result.map(result => result.toJSON()).reverse()});
         }).catch(
             (err) => {
-                req.flash('error_msg', 'Houve um erro do servidor!')
-                res.redirect('/admin')})
-})
+                req.flash('error_msg', 'Houve um erro do servidor!');
+                res.redirect('/admin');
+            });
+});
 
 router.get('/categorias/add', (req, res) => {
-    res.render('admin/addcategorias')   
-})
+    res.render('admin/addcategorias');  
+});
 
 router.post('/categorias/nova', (req, res) => {
 
-    let erros = []
+    let erros = [];
 
     //validações
     if(!req.body.nome || req.body.nome === undefined || req.body.nome === null){
-        erros.push({text : 'nome é obrigatório'})
+        erros.push({text : 'nome é obrigatório'});
     }
 
     if(!req.body.slug || req.body.slug === undefined || req.body.slug === null){
-        erros.push({text : 'slug é obrigatório'})
+        erros.push({text : 'slug é obrigatório'});
     }
 
     if(erros.length > 0){
-        res.render('admin/addcategorias', {erros : erros})
+        res.render('admin/addcategorias', {erros : erros});
     }else{
         new Categoria(req.body).save().then(       
             () => {     
-                req.flash('success_msg', 'Categoria criada com sucesso!')
-                res.redirect('/admin/categorias')
+                req.flash('success_msg', 'Categoria criada com sucesso!');
+                res.redirect('/admin/categorias');
             }            
         ).catch(
             (err) => {             
-                req.flash('error_msg', 'Erro ao salvar categoria!')
-                res.redirect('/admin/categorias')
-            })
+                req.flash('error_msg', 'Erro ao salvar categoria!');
+                res.redirect('/admin/categorias');
+            });
     }
-})
+});
 
 router.get('/categorias/edit/:id' , (req, res) => {
     Categoria.findOne({_id : req.params.id }).then( 
         (result) => {
-            res.render('admin/editcategoria', { categoria : result.toJSON() })            
+            res.render('admin/editcategoria', { categoria : result.toJSON() });            
         }
     ).catch(
         (err) => {
-            req.flash('error_msg', 'Erro desconhecido!')
-            res.redirect('/admin/categorias')
+            req.flash('error_msg', 'Erro desconhecido!');
+            res.redirect('/admin/categorias');
         }
-    )
-})
+    );
+});
 
 router.post('/categorias/edit', (req, res) => {
     Categoria.updateOne( {_id : req.body._id}, req.body ).then(
         (result) =>
         {     
-            req.flash('success_msg' , 'Atualizado com sucesso!')
-            res.redirect('/admin/categorias')
+            req.flash('success_msg' , 'Atualizado com sucesso!');
+            res.redirect('/admin/categorias');
         }
     ).catch(
         (err) => {   
-            req.flash('error_msg' , 'Não foi possivel atualizar!')
-            res.redirect('/admin/categorias')   
+            req.flash('error_msg' , 'Não foi possivel atualizar!');
+            res.redirect('/admin/categorias');  
         }
-    )
-})
+    );
+});
 
 router.post('/categorias/excluir', (req, res) => {
     Categoria.deleteOne({ _id :  req.body._id }).then(
         (result) => {
             if(result.deletedCount == 1){
-                req.flash('success_msg' , 'Excluido com sucesso!')
+                req.flash('success_msg' , 'Excluido com sucesso!');
             }else{
-                req.flash('error_msg' , 'Erro ao excluir!')
+                req.flash('error_msg' , 'Erro ao excluir!');
             }
-            res.redirect('/admin/categorias')   
+            res.redirect('/admin/categorias');   
         }
     ).catch(
         (err) => {
-            req.flash('error_msg', 'Erro no servidor!')
-            res.redirect('/admin/categorias')  
+            req.flash('error_msg', 'Erro no servidor!');
+            res.redirect('/admin/categorias');  
+        }
+    );
+});
+
+router.get('/postagens', (req, res) => {
+    let postagens = [];
+    Postagem.find()
+    .then(
+        (result) => {         
+            postagens = result.map((value) => value.toJSON());
         }
     )
-})
-module.exports = router
+    .catch(
+        (err) => {         
+            req.flash('error_msg' , 'Erro ao carregar postagens!');
+        }
+    )
+    .finally(
+        () => {           
+            res.render('admin/postagens', {postagens : postagens});
+        }
+    );
+});
+
+router.get('/postagens/add', (req, res) => {
+    let categorias = [];
+    Categoria.find()
+    .then(
+        (result) => {        
+            categorias = result.map((value) => value.toJSON());
+        })
+    .catch(
+        (err) => {
+            req.flash('error_msg', 'Erro ao listar categorias!');
+        })
+    .finally(
+        () => {
+            res.render('admin/addpostagem', {categorias : categorias});
+        });
+});
+
+router.post('/postagens/nova',  (req, res) =>{
+    new Postagem(req.body).save()
+    .then(
+        () => {
+            req.flash('success_msg', 'Postagem criada com sucesso!');
+        }
+    )
+    .catch(
+        () => {
+            req.flash('error_msg', 'Postagem não foi criada!');
+        }
+    )
+    .finally(
+        () => {          
+            res.redirect('/admin/postagens');
+        }
+    );     
+});
+
+module.exports = router;
