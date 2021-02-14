@@ -9,5 +9,3 @@ const Categoria = new Schema({
 });
 
 mongoose.model('categoria', Categoria);
-
-

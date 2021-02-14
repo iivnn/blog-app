@@ -7,11 +7,12 @@
     <div class="card mt-4">
         <div class="card-body">
             <h4>{{titulo}}</h4>
-            <small class="text-secondary">{{slug}}</small><br>
+            <small class="text-secondary position-sticky">{{slug}}</small>
+            <div class="badge bg-secondary ms-2">#{{categoria.nome}}</div>
             <hr>
             <small class="text-secondary">{{descricao}}</small><br>
-            <p>{{conteudo}}</p>
-            <a href="/"><button class="btn btn-secondary mt-2">editar</button></a>
+            <p>{{conteudo}}</p>            
+            <a href="/admin/postagens/edit/{{_id}}"><button class="btn btn-secondary mt-2">editar</button></a>
         </div>
     </div>
 {{else}}

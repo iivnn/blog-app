@@ -1,0 +1,35 @@
+<h3>Nova postagem:</h3>
+<div class="card">
+    <div class="card-body">
+        {{#with postagem}}
+        <form action="/admin/postagens/editar" method="POST">
+            <input type="hidden" name="_id" value="{{_id}}">
+            <label for="nome">Titulo: </label>
+                <input type="text" name="titulo" placeholder="Titulo da postagem" class="form-control" required value="{{titulo}}"
+            <label for="slug" class=" mt-4">Slug: </label>
+                <input type="text"  name="slug" placeholder="Slug da categoria" class="form-control"  required value="{{slug}}">
+            <label for="slug" class=" mt-4">Descricao: </label>
+                <input type="text"  name="descricao" placeholder="Descricao da categoria" class="form-control"  required value="{{descricao}}">
+            <label for="slug" class=" mt-4">Conteudo: </label>
+                <textarea  name="conteudo" placeholder="Conteudo da categoria" class="form-control"  required>{{conteudo}}</textarea>
+            <label for="categoria" class="mt-4">Categoria: </label>           
+        {{/with}}
+                <select name="categoria" class="form-select"  required>
+                    {{#each categorias}}
+                        {{#if isSelected}}
+                            <option value="{{_id}}" selected>{{nome}} (atual) </option>
+                        {{else}}
+                            <option value="{{_id}}">{{nome}}</option>
+                        {{/if}}
+                    {{else}}
+                        <option value="0">Nenhuma categoria registrada</option>
+                    {{/each}}
+                </select>
+            <button type="submit" class="btn btn-success mt-4 float-start">Editar Postagem</button>
+        </form>
+        <form action="/admin/postagens/excluir" method="POST" >
+            <input type="hidden" name="_id" value="{{postagem._id}}">
+            <button type="submit" class="btn btn-danger ms-2 mt-4">Excluir Postagem</button>           
+        </form>
+    </div>
+</div>
