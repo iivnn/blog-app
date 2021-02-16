@@ -1,0 +1,16 @@
+{{#each postagens}}
+    <div class="card mt-4">
+        <div class="card-body">
+            <h4>{{titulo}}</h4>
+            <small class="text-secondary position-sticky">{{slug}}</small>
+            <div class="badge bg-secondary ms-2">#{{categoria.nome}}</div>
+            <hr>
+            <small class="text-secondary">{{descricao}}</small><br>
+            <p>{{conteudo}}</p>            
+            <a href="{{link}}{{_id}}"><button class="btn btn-secondary mt-2">{{txt}}</button></a>
+        </div>
+    </div>
+{{else}}
+    <h4 class="mt-4">Nenhuma postagem cadastrada!</h4>
+{{/each}} 
+{{botao.link}}{{botao.txt}}

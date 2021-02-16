@@ -7,8 +7,8 @@ const Postagem = new Schema({
     slug : { type : String, required : true},
     descricao : { type : String, required : true},
     conteudo : { type : String, required : true},
-    categoria : { type : Schema.Types.ObjectId , ref : 'categoria', required : true},
-    data : { type : Date ,  default : Date.now(), required : true}
+    categoria : { type : Schema.Types.ObjectId , ref : 'categoria', required : true}
 });
 
+Postagem.set('timestamps', { timestamps: { createdAt: 'created_at' }});
 mongoose.model('postagem', Postagem);

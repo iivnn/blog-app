@@ -104,7 +104,11 @@ router.get('/postagens', (req, res) => {
     Postagem.find().populate('categoria')
     .then(
         (result) => {         
-            postagens = result.map((value) => value.toJSON());
+            postagens = result.map( value => value.toJSON()).reverse();
+            postagens.forEach((value) => {
+                value.txt = 'editar';
+                value.link = '/admin/postagens/edit/';
+            });
         }
     )
     .catch(
@@ -220,6 +224,19 @@ router.post('/postagens/excluir' , (req, res) => {
     .finally(
         () => {
             res.redirect('/admin/postagens');
+        }
+    );
+});
+
+router.get('/postagens/ler/:id', (req, res) => {
+    Postagem.findOne({_id : req.params.id}, null, {populate : ['categoria']})
+    .then(
+        (result) => {
+            res.send(result.toJSON());
+        }
+    ).catch(
+        (err) => {
+            res.send(err);
         }
     );
 });

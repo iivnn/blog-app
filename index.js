@@ -8,6 +8,9 @@ const bodyparser = require('body-parser');
 const session = require('express-session');
 const flash = require('connect-flash');
 
+require('./models/Postagem');
+const Postagem = mongoose.model('postagem');
+
 //variables
 const PORT = 6565;
 
@@ -53,7 +56,26 @@ app.use(
 
 //routes
 app.get('/', (req,res) => {
-    res.render('home');
+    let postagens = [];
+    Postagem.find(null, null, {populate : ['categoria'], sort : { createdAt : 'desc'}, limit : 3})
+    .then(
+        (result) => {
+            postagens = result.map( value => value.toJSON());
+            postagens.forEach((value) => {
+                value.txt = 'leia mais';
+                value.link = '/admin/postagens/ler/';
+            });
+        }
+    ).catch(
+        (err) => {
+            req.flash('error_msg', 'Erro ao listar categorias!');
+        }
+    )
+    .finally(
+        () => {          
+            res.render('index', {postagens : postagens});
+        }
+    );
 });
 const adminRoute = require('./routes/admin');
 app.use('/admin', adminRoute);
