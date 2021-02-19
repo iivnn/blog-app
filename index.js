@@ -7,7 +7,12 @@ const handlebars = require('express-handlebars');
 const bodyparser = require('body-parser');
 const session = require('express-session');
 const flash = require('connect-flash');
+const passport = require('passport');
 
+//auth
+require('./config/auth')(passport);
+
+//models
 require('./models/Postagem');
 const Postagem = mongoose.model('postagem');
 
@@ -42,6 +47,11 @@ const PORT = 6565;
         resave : true,
         saveUninitialized : true
     }));
+
+    //auth
+    app.use(passport.initialize());
+    app.use(passport.session());
+
     //flash
     app.use(flash());
 
@@ -50,6 +60,8 @@ app.use(
     (req, res, next) => {
         res.locals.success_msg = req.flash('success_msg');
         res.locals.error_msg = req.flash('error_msg');
+        res.locals.error = req.flash('error');
+        res.locals.user = req.user || null;
         next();
     }
 );
@@ -77,8 +89,12 @@ app.get('/', (req,res) => {
         }
     );
 });
+
 const adminRoute = require('./routes/admin');
 app.use('/admin', adminRoute);
+
+const userRoute = require('./routes/user');
+app.use('/user', userRoute);
 
 //start
 app.listen(PORT, ( ) => {
